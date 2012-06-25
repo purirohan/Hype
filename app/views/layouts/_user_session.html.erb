@@ -1,0 +1,5 @@
+<% if current_user %>
+  <li><%= link_to "Sign out (#{current_user.name})", logout_path, id: "sign_out" %> </li>
+<% else %>
+  <li><%= link_to "Sign in with Facebook", user_omniauth_authorize_path(:facebook) %></li>
+<% end %>
