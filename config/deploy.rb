@@ -23,10 +23,11 @@
 #     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
 #   end
 # end
+#require "bundler/capistrano"
 set :rvm_ruby_string, '1.9.2-p320@hype'                     # Or:
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
-require "rvm/capistrano"                               # Load RVM's capistrano plugin.
+#require "rvm/capistrano"                               # Load RVM's capistrano plugin.
 
 
 set :stages, %w(production staging)
@@ -49,7 +50,7 @@ task :check_production do
   # end
 end
 
-before "deploy", "check_production", 'rvm:install_rvm'
+
 
 # tasks
 namespace :deploy do
@@ -66,3 +67,11 @@ namespace :deploy do
     run "touch #{current_path}/tmp/restart.txt"
   end
 end
+
+# namespace :rvm do
+#   task :trust_rvmrc do
+#     run "rvm rvmrc trust #{release_path}"
+#   end
+# end
+
+before "deploy", "check_production"#, 'rvm:install_rvm', "rvm:trust_rvmrc"
