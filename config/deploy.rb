@@ -23,7 +23,7 @@
 #     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
 #   end
 # end
-#require "bundler/capistrano"
+require "bundler/capistrano"
 set :rvm_ruby_string, '1.9.2-p320@hype'                     # Or:
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
