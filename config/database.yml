@@ -45,7 +45,8 @@ production:
   adapter: mysql2
   database: hype_production
   username: root
-  password: X861D84svTabosy
+  password: lophyounee86
   host: localhost
+  socket: /Applications/rubystack-2.1-0/mysql/tmp/mysql.sock
   encoding: utf8
 
