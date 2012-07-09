@@ -23,6 +23,11 @@
 #     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
 #   end
 # end
+set :rvm_ruby_string, '1.9.2-p320@hype'                     # Or:
+#set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
+
+require "rvm/capistrano"                               # Load RVM's capistrano plugin.
+
 
 set :stages, %w(production staging)
 set :default_stage, "staging"
@@ -33,15 +38,31 @@ set :scm, :git
 
 desc "check production task"
 task :check_production do
-  if stage.to_s == "production"
-    puts " \n Are you REALLY sure you want to deploy to production?"
-    puts " \n Enter the password to continue\n "
-    password = STDIN.gets[0..7] rescue nil
-      if password != 'hype123'
-      puts "\n !!! WRONG PASSWORD !!!"
-      exit
-    end
-  end
+  # if stage.to_s == "production"
+  #   puts " \n Are you REALLY sure you want to deploy to production?"
+  #   puts " \n Enter the password to continue\n "
+  #   password = STDIN.gets[0..7] rescue nil
+  #     if password != 'hype123'
+  #     puts "\n !!! WRONG PASSWORD !!!"
+  #     exit
+  #   end
+  # end
 end
 
-before "deploy", "check_production"
+before "deploy", "check_production", 'rvm:install_rvm'
+
+# tasks
+namespace :deploy do
+  task :start, :roles => :app do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+
+  task :stop, :roles => :app do
+    # Do nothing.
+  end
+
+  desc "Restart Application"
+  task :restart, :roles => :app do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+end
