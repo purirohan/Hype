@@ -38,5 +38,5 @@ namespace :rvm do
   end
 end
 
-before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
+#before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
 after "deploy:restart", "deploy:cleanup"
