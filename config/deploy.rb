@@ -26,7 +26,7 @@ namespace :deploy do
     task :precompile, roles: :web, except: {no_release: true} do
       run_locally "bundle exec rake assets:precompile"
       find_servers_for_task(current_task).each do |server|
-        run_locally "rsync -vr --exclude='.DS_Store' public/assets #{user}@#{server.host}:#{shared_path}/"
+        run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' public/assets #{user}@#{server.host}:#{shared_path}/"
       end
     end
   end
@@ -38,5 +38,5 @@ namespace :rvm do
   end
 end
 
-before "deploy"#, "check_production"#, 'rvm:install_rvm', "rvm:trust_rvmrc"
+before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
 after "deploy:restart", "deploy:cleanup"
