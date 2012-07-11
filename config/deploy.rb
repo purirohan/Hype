@@ -36,7 +36,7 @@ desc "Symlinks the database.yml"
 task :copy_db_file, :roles => :app do
   #run "#{try_sudo} ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml"
   find_servers_for_task(current_task).each do |server|
-    run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' config/database.example.yml #{user}@#{server.host}:#{release_path}/config/database.yml"
+    run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' config/database.config.yml #{user}@#{server.host}:#{release_path}/config/database.yml"
   end
 end
 
