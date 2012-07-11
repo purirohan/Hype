@@ -30,6 +30,10 @@ namespace :deploy do
       end
     end
   end
+  desc "Symlinks the database.yml"
+  task :symlink_db, :roles => :app do
+    run "#{try_sudo} ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+  end
 end
 
 namespace :rvm do
@@ -39,4 +43,4 @@ namespace :rvm do
 end
 
 #before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
-after "deploy:restart", "deploy:cleanup"
+after "deploy:restart", "deploy:cleanup", 'deploy:symlink_db'
