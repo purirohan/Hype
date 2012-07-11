@@ -21,15 +21,15 @@ end
 
 
 namespace :deploy do
-  # namespace :assets do
-  #   desc "Precompile assets on local machine and upload them to the server."
-  #   task :precompile, roles: :web, except: {no_release: true} do
-  #     run_locally "bundle exec rake assets:precompile"
-  #     find_servers_for_task(current_task).each do |server|
-  #       run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' public/assets #{user}@#{server.host}:#{shared_path}/"
-  #     end
-  #   end
-  # end
+  namespace :assets do
+    desc "Precompile assets on local machine and upload them to the server."
+    task :precompile, roles: :web, except: {no_release: true} do
+      run_locally "bundle exec rake assets:precompile"
+      find_servers_for_task(current_task).each do |server|
+        run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' public/assets #{user}@#{server.host}:#{shared_path}/"
+      end
+    end
+  end
   # desc "Symlinks the database.yml"
   # task :symlink_db, :roles => :app do
   #   run "#{try_sudo} ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
