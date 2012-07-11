@@ -33,10 +33,10 @@ namespace :deploy do
 end
 
 desc "Symlinks the database.yml"
-task :symlink_db, :roles => :app do
+task :copy_db_file, :roles => :app do
   #run "#{try_sudo} ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml"
   find_servers_for_task(current_task).each do |server|
-    run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' config/database.example.yml #{user}@#{server.host}:#{shared_path}/config/database.yml"
+    run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/rails_app.pem' -vr --exclude='.DS_Store' config/database.example.yml #{user}@#{server.host}:#{release_path}/config/database.yml"
   end
 end
 
@@ -46,6 +46,6 @@ namespace :rvm do
   end
 end
 
-before "deploy", "symlink_db"
+before "deploy:restart", "copy_db_file"
 #before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
 after "deploy:restart", "deploy:cleanup"#, 'deploy:symlink_db'
