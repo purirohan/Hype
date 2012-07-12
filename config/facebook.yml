@@ -7,9 +7,9 @@ test:
   secret: dfdeb0d420f5c81bef2bd525c66a205f
 
 staging:
-  key: "166318693501105"
-  secret: dfdeb0d420f5c81bef2bd525c66a205f
+  key: "407384475963970"
+  secret: 77e4bd3bd0624c0493eb2d2be25e49b9
 
 production:
-  key: "338580709514324"
-  secret: c16bf47bc0ec1454b531d387576a902c
+  key: "183952731736353"
+  secret: 3e9d56865916c210e576c67579fd2669
