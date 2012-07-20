@@ -49,6 +49,9 @@ gem "faker"
 gem "simplecov", :require => false, :group => :test
 gem 'rvm-capistrano'
 gem "koala"
+
+gem 'jasminerice', :group => [:development, :test]
+gem 'guard-jasmine', :group => [:development, :test]
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

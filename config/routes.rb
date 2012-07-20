@@ -1,7 +1,9 @@
 Hype::Application.routes.draw do
   get "home/index"
 
-  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" } do
+  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" } 
+  
+  devise_scope :user do
     get "logout" => "devise/sessions#destroy"
   end
 
