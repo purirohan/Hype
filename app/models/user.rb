@@ -18,15 +18,43 @@ class User < ActiveRecord::Base
                            email:auth.info.email,
                            password:Devise.friendly_token[0,20]
                            )
+      user.oauth_token = auth.credentials.token
+      user.oauth_expires_at = Time.at(auth.credentials.expires_at)
+      user.save!
     end
     user
   end
   
   def self.new_with_session(params, session)
-      super.tap do |user|
-        if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
-          user.email = data["email"] if user.email.blank?
-        end
+    super.tap do |user|
+      if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
+        user.email = data["email"] if user.email.blank?
       end
     end
+  end
+  
+  def facebook
+    @facebook ||= Koala::Facebook::API.new(oauth_token)
+      block_given? ? yield(@facebook) : @facebook
+    rescue Koala::Facebook::APIError => e
+      logger.info e.to_s
+      nil # or consider a custom null object
+  end
+  
+  def friends
+    #facebook { |fb| fb.get_connection("me", "friends") }
+    facebook.fql_query("select uid, name, pic_square from user where uid in (select uid2 from friend where uid1 = me())")
+  end
+  
+  def profile
+    facebook.get_object("me")
+  end
+  
+  def profile_picture
+    facebook.get_picture("syaiful.sabril")
+  end
+  
+  def friend(friend_id)
+    
+  end
 end

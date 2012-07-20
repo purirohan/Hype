@@ -1,0 +1,22 @@
+- if current_user
+  .row
+    .span9
+      .row
+        .span1
+          = image_tag current_user.profile_picture
+        .span4
+          = current_user.profile['name']
+          %br
+          = current_user.profile['location']['name']
+  /= debug current_user.profile
+  %br
+  .row
+    .span9
+      .row
+        .span2
+          %h3#friends Facebook Friends
+  .row
+    .span9
+      %ul.thumbnails
+        - for friend in current_user.friends do 
+          = render :partial => "home/friend", :locals => { :friend => friend }
