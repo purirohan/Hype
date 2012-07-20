@@ -30,6 +30,24 @@ namespace :deploy do
       end
     end
   end
+  
+  namespace :db do
+    desc "Run rake db:setup."
+    task :setup, :roles => :db, :only => { :primary => true } do
+        rake = fetch(:rake, "rake")
+        rails_env = fetch(:rails_env, "production")
+        migrate_env = fetch(:migrate_env, "")
+        migrate_target = fetch(:migrate_target, :latest)
+
+        directory = case migrate_target.to_sym
+          when :current then current_path
+          when :latest  then latest_release
+          else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
+          end
+
+        run "cd #{directory} && #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:setup"
+      end
+  end
 end
 
 desc "Symlinks the database.yml"
@@ -46,6 +64,6 @@ namespace :rvm do
   end
 end
 
-before "deploy:restart", "copy_db_file"
+after "deploy:update", "copy_db_file"
 #before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
 after "deploy:restart", "deploy:cleanup"#, 'deploy:symlink_db'
