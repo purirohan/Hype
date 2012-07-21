@@ -42,8 +42,8 @@ gem "guard-livereload", ">= 0.3.0", :group => :development
 gem "guard-rspec", ">= 0.4.3", :group => :development
 gem "guard-cucumber", ">= 0.6.1", :group => :development
 gem "twitter-bootstrap-rails", ">= 2.0.3"
-#gem "therubyracer", :group => :assets, :platform => :ruby
-gem "mustang", :group => :assets, :platform => :ruby
+gem "therubyracer", :group => :assets, :platform => :ruby
+#gem "mustang", :group => :assets, :platform => :ruby
 gem "simple_form"
 gem "will_paginate", ">= 3.0.3"
 gem 'quiet_assets', :group => :development
