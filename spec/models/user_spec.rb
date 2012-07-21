@@ -6,13 +6,10 @@ describe User do
       :name => "Example User",
       :email => "user@example.com",
       :password => "foobar",
-      :password_confirmation => "foobar",
-      :roles => ["owner"]
+      :password_confirmation => "foobar"
     }
     
     @user = User.new(@attr)
-    @user.account = @account
     @user.save
-    @account.create_owner
   end
 end
