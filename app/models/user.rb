@@ -42,7 +42,6 @@ class User < ActiveRecord::Base
   end
   
   def friends
-    #facebook { |fb| fb.get_connection("me", "friends") }
     facebook.fql_query("select uid, name, pic_square from user where uid in (select uid2 from friend where uid1 = me())")
   end
   
@@ -52,9 +51,5 @@ class User < ActiveRecord::Base
   
   def profile_picture
     facebook.get_picture("syaiful.sabril")
-  end
-  
-  def friend(friend_id)
-    
   end
 end
