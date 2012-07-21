@@ -25,7 +25,7 @@ RSpec.configure do |config|
       :last_name => 'Sabril',
       :image => 'http://graph.facebook.com/1234567/picture?type=square',
       :urls => { :Facebook => 'http://www.facebook.com/syaiful.sabril' },
-      :location => 'Bandung, California',
+      :location => 'Bandung, Indonesia',
       :verified => true
     },
     :credentials => {
@@ -36,14 +36,14 @@ RSpec.configure do |config|
     :extra => {
       :raw_info => {
         :id => '1234567',
-        :name => 'Joe Bloggs',
-        :first_name => 'Joe',
-        :last_name => 'Bloggs',
-        :link => 'http://www.facebook.com/jbloggs',
-        :username => 'jbloggs',
-        :location => { :id => '123456789', :name => 'Palo Alto, California' },
+        :name => 'Syaiful Sabril',
+        :first_name => 'Syaiful',
+        :last_name => 'Sabril',
+        :link => 'http://www.facebook.com/syaiful.sabril',
+        :username => 'syaiful.sabril',
+        :location => { :id => '123456789', :name => 'Bandung, Indonesia' },
         :gender => 'male',
-        :email => 'joe@bloggs.com',
+        :email => 'syaiful_sabril@yahoo.com',
         :timezone => -8,
         :locale => 'en_US',
         :verified => true,

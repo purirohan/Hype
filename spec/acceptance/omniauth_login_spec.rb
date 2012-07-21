@@ -9,12 +9,6 @@ def logged_in?
 end
 
 def login_with(provider, mock_options = nil)
-  # if mock_options == :invalid_credentials
-  #   OmniAuth.config.mock_auth[provider] = :invalid_credentials
-  # elsif mock_options
-  #   OmniAuth.config.add_mock provider, mock_options
-  # end
-  OmniAuth.config.mock_auth[:facebook] 
   visit "/auth/facebook"
 end
 
@@ -29,10 +23,10 @@ feature "Using Login Buttons" do
     logged_in?.should == false
   end
 
-  scenario "using Facebook" do
+  scenario "Sign in using Facebook account" do
     click_on "Sign in with Facebook"
 
-    page.should have_content "Sign out (Joe Bloggs)"
+    page.should have_content "Sign out (Syaiful Sabril)"
     logged_in?.should == true
   end
 end
