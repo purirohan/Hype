@@ -11,5 +11,5 @@ staging:
   secret: 77e4bd3bd0624c0493eb2d2be25e49b9
 
 production:
-  key: "183952731736353"
-  secret: 3e9d56865916c210e576c67579fd2669
+  key: "338580709514324"
+  secret: c16bf47bc0ec1454b531d387576a902c
