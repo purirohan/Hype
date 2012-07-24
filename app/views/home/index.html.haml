@@ -1,7 +1,7 @@
 .row
   .span9
     %h2 Home
-- if current_user
+- if current_user && current_user.profile
   .row
     .span12
       .row
@@ -10,7 +10,7 @@
         .span4
           = current_user.profile['name']
           %br
-          = current_user.profile['location']['name']
+          = current_user.profile['location']['name'] if current_user.profile['location']
   /= debug current_user.profile
   %br
   .row
