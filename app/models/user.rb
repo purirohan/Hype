@@ -50,6 +50,6 @@ class User < ActiveRecord::Base
   end
   
   def profile_picture
-    facebook.get_picture("syaiful.sabril")
+    facebook.get_picture("me")
   end
 end
