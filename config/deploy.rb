@@ -25,7 +25,7 @@ namespace :deploy do
   namespace :assets do
     desc "Precompile assets on local machine and upload them to the server."
     task :precompile, roles: :web, except: {no_release: true} do
-      run_locally "bundle exec rake assets:precompile"
+      run_locally "bundle exec rake assets:precompile --trace"
       find_servers_for_task(current_task).each do |server|
         run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/keys/rails_app.pem' -vr --exclude='.DS_Store' public/assets #{user}@#{server.host}:#{shared_path}/"
       end
@@ -46,18 +46,18 @@ namespace :deploy do
           else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
           end
 
-        run "cd #{directory} && #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:setup"
+        run "cd #{directory} && #{rake} RAILS_ENV=#{rails_env} #{migrate_env} db:setup --trace"
       end
   end
 end
 
-desc "Symlinks the database.yml"
-task :copy_db_file, :roles => :app do
-  #run "#{try_sudo} ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml"
-  find_servers_for_task(current_task).each do |server|
-    run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/keys/rails_app.pem' -vr --exclude='.DS_Store' config/database.config.yml #{user}@#{server.host}:#{release_path}/config/database.yml"
-  end
-end
+# desc "Symlinks the database.yml"
+# task :copy_db_file, :roles => :app do
+#   #run "#{try_sudo} ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml"
+#   find_servers_for_task(current_task).each do |server|
+#     run_locally "rsync -e 'ssh -i #{ENV['HOME']}/.ssh/keys/rails_app.pem' -vr --exclude='.DS_Store' config/database.config.yml #{user}@#{server.host}:#{release_path}/config/database.yml"
+#   end
+# end
 
 namespace :rvm do
   task :trust_rvmrc do
