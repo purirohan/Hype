@@ -1,0 +1,13 @@
+defaults: &defaults
+  groupon_key: 41550c408db4945fedee9121f4d982fd475ee594
+  meetup_key: 5c567f13323a4b4864774622f1fb
+  eventbrite_key: ZjRmMTc2NDlkMTRh
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

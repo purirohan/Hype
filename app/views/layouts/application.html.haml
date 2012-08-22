@@ -28,21 +28,19 @@
               = render "layouts/user_session"
     .container
 
-      .content
+      #home-content.content
         .row
-          .span9
+          .span11
+            %h1.welcome-title Welcome to Hype <i class="icon-heart"></i>
             = yield
-          .span3
-            .well.sidebar-nav
-              %h3 Sidebar
-              %ul.nav.nav-list
-                %li.nav-header Sidebar
-                %li= link_to "Link 1", "/path1"
-                %li= link_to "Link 2", "/path2"
-                %li= link_to "Link 3", "/path3"
     
-      %footer
-        %p &copy; Company 2012
+      %footer#footer
+        .btn-group
+          %button.btn.btn-success &copy; Hype Company 2012
+          %button.btn.btn-success.dropdown-toggle 
+            %span.icon-info-sign
+            
+
     /
       Javascripts
       \==================================================

@@ -1,3 +1,25 @@
 // Place all the styles related to the home controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+$black_color:#000;
+
+a.brand {
+  margin-left:0;
+}
+h1.welcome-title {
+  font-size:50px;
+}
+#home-content {
+  display:block;
+  margin-bottom:100px;
+}
+.content-tabs {
+  margin-top:20px;
+}
+.content-block {
+  display:none;
+}
+.content-block.active {
+  display:block;
+}

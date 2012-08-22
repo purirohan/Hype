@@ -1,0 +1,41 @@
+
+.content-tabs
+  %ul.nav.nav-tabs
+    %li.active
+      %a.api-tab.eventbrite(href="#") EventBrite
+    %li
+      %a.api-tab.meetup(href="#") Meetup
+    %li
+      %a.api-tab.seatgeek(href="#") Seatgeek
+    %li
+      %a.api-tab.songkick(href="#") Songkick
+    %li
+      %a.api-tab.active(href="#") Active
+    %li
+      %a.api-tab.groupon(href="#") Groupon
+
+.content-blocks
+  #eventbrite.content-block.active
+    %h2 Eventbrite Content
+    .content
+      = debug @eventbrite
+  #meetup.content-block
+    %h2 Meetup Content
+    .content
+      = debug @meetup
+  #seatgeek.content-block
+    %h2 Seatgeek Content
+    .content
+      = debug @null
+  #songkick.content-block
+    %h2 Songkick Content
+    .content
+      = debug @null
+  #active.content-block
+    %h2 Active Content
+    .content
+      = debug @null
+  #groupon.content-block
+    %h2 Groupon Content
+    .content
+      = debug @groupon

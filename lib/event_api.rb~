@@ -1,0 +1,366 @@
+require 'net/http'
+require 'net/https'
+require 'uri'
+require 'json'
+require 'api'
+
+class EventApi < EventApiObject
+
+	# ruby time: for date
+	@@weekend = {
+		'friday' => {'day' => "Fri Sep 16 01:00:33 2011", 'night' => "Fri Sep 16 23:48:33 2011"},
+		'saturday' => {'day' => "Sat Sep 17 01:00:33 2011", 'night' => "Sat Sep 17 23:48:33 2011"},
+		'sunday' =>  {'day' => "Sun Sep 18 01:00:33 2011", 'night' => "Sun Sep 18 23:48:33 2011"},
+		'all' => {'day' => "Fri Sep 16 01:00:33 2011", 'night' => "Sun Sep 18 23:48:33 2011"}
+	}
+
+	def initialize
+		# def initialize(city)
+		# list of availalbe cities and needed attributes for each api
+		@cities = {
+			'la' => {'lat'=>34.052234,'lon'=>'-118.243685','groupon'=>'los-angeles','zip'=>90012,'radius'=>50,'radius2'=>13},
+			'nyc' => {'lat'=>40.71122335281535,'lon'=>-73.95292282104492,'groupon'=>'new-york','zip'=>'11222','radius'=>40,'radius2'=>11},
+			'dc' => {'lat'=>38.89464,'lon'=>-76.999569,'groupon'=>'washington-dc','zip'=>20002,'radius'=>40,'radius2'=>11},
+			'ch' => {'lat'=>41.881928,'lon'=>-87.644547,'groupon'=>'chicago','zip'=>60661,'radius'=>5,'radius2'=>11},
+			'sf' => {'lat'=>37.790943,'lon'=>-122.408499,'groupon'=>'san-francisco','zip'=>94117,'zip1'=>94601,'radius'=>20,'radius2'=>11},
+			'ph' => {'lat'=>40.012545,'lon'=>-75.148701,'groupon'=>'philadelphia','zip'=>19140,'radius'=>20,'radius2'=>11},
+			'seattle' => {'lat'=>47.60621,'lon'=>-122.33207,'groupon'=>'seattle','zip'=>98101,'radius'=>50,'radius2'=>20},
+			'portland' => {'lat'=>45.52345,'lon'=>-122.67621,'groupon'=>'portland','zip'=>97209,'radius'=>50,'radius2'=>20},
+			'sj' => {'lat'=>37.33939,'lon'=>-121.89496,'groupon'=>'san-jose','zip'=>95112,'radius'=>70,'radius2'=>20},
+			'sd' => {'lat'=>32.702883,'lon'=>-117.15725,'groupon'=>'san-diego','zip'=>92101,'radius'=>60,'radius2'=>20},
+			'miami' => {'lat'=>25.78897,'lon'=>-80.17744,'groupon'=>'miami','zip'=>33125,'radius'=>40,'radius2'=>20},
+			'austin' => {'lat'=>30.26715,'lon'=>-97.74306,'groupon'=>'austin','zip'=>78701,'radius'=>70,'radius2'=>20},
+			'boston' => {'lat'=>42.35843,'lon'=>-71.05977,'groupon'=>'boston','zip'=>'02111','radius'=>30,'radius2'=>20},
+			'denver' => {'lat'=>39.73915,'lon'=>-104.98470,'groupon'=>'denver','zip'=>80203,'radius'=>70,'radius2'=>40},
+			'dallas' => {'lat'=>32.80295,'lon'=>-96.76992,'groupon'=>'dallas','zip'=>75214,'radius'=>100,'radius2'=>50},
+			'houston' => {'lat'=>29.76019,'lon'=>-95.36939,'groupon'=>'houston','zip'=>77002,'radius'=>100,'radius2'=>20},
+			'baltimore' => {'lat'=>39.29038,'lon'=>-76.61219,'groupon'=>'baltimore','zip'=>21202,'radius'=>20,'radius2'=>20},
+			'charlotte' => {'lat'=>35.22709,'lon'=>-80.84313,'groupon'=>'charlotte','zip'=>28202,'radius'=>30,'radius2'=>20},
+			'phoenix' => {'lat'=>33.44838,'lon'=>-112.07404,'groupon'=>'phoenix','zip'=>85004,'radius'=>100,'radius2'=>50}
+
+		}
+	end
+
+	attr_reader :cities
+
+=begin
+	event categories listed in the system
+	meetups are 1
+	songkick: 12
+	seatgeek: 2, seatgeek - theater: 5 sdaf
+	groupon 6
+	active: 8 
+	performace is theatre
+=end
+	@@all_cats = {
+		'conference' => '4', 
+		'conventions' => '4', 
+		'entertainment' => '7', 
+		'fundraisers' => '3', 
+		'meetings' => '4', 
+		# 'other' => '13', 
+		'performances' => '5', 
+		# 'reunions' => '13', 
+		'sales' => '6', 
+		'seminars' => '4', 
+		'social' => '7', 
+		'sports' => '8', 
+		'tradeshows' => '4', 
+		'travel' => '9', 
+		'religion' => '3', 
+		'fairs' => '10', 
+		'food' => '11', 
+		'music' => '12', 
+		'recreation' => '8'
+	}
+
+	def groupon(city = 'nyc')
+		query = "http://api.groupon.com/v2/deals.json?division_id=#{@cities[city]["groupon"]}&client_id=41550c408db4945fedee9121f4d982fd475ee594"
+		deals = get_http_response(query)
+
+		# if error in request
+		unless deals
+			return nil
+		end
+
+		# filter the deals
+		count_it(deals["deals"])
+		add_measure(deals["deals"],['soldQuantity'])
+		sort_it(deals["deals"],'soldQuantity')
+		image_it(deals["deals"],@average)
+		replace_dups(deals["deals"],'groupon')
+
+		return deals
+	end
+
+	def eventbrite(category,city = 'nyc',amount = '100',page = false)
+		eb_key = 'ZjRmMTc2NDlkMTRh'
+		# for repeat query searches
+		@e_brites = []
+
+		# loop through each category to make a query
+		if category == 'all' or category.empty? or category == 'reset'
+			@@all_cats.each do |ac, image|
+				startDate = Time.parse("#{@@weekend['all']['day']}").strftime('%Y-%m-%d')
+				endDate = Time.parse("#{@@weekend['all']['night']}").strftime('%Y-%m-%d')
+				query = "http://www.eventbrite.com/json/event_search?app_key=#{eb_key}&latitude=#{@cities[city]["lat"]}&longitude=#{@cities[city]["lon"]}&max=#{amount}&within=#{@cities[city]["radius"]}&category=#{ac}&date=#{startDate}%20#{endDate}"
+				e_array = get_http_response(query)
+				if e_array
+					e_array["events"].push(image)
+					@e_brites.push(e_array["events"])
+				else
+					return nil
+				end
+			end
+		else
+
+			# run api query and filter by category
+			@@all_cats.each do |ac, image|
+				# category id's are 1 char while day filters are spelled out
+				if category == 'friday' or category == 'saturday' or category == 'sunday'
+					# run query for particular day as param
+					date = Time.parse("#{@@weekend[category]['night']}").strftime('%Y-%m-%d')
+					query = "http://www.eventbrite.com/json/event_search?app_key=#{eb_key}&latitude=#{@cities[city]["lat"]}&longitude=#{@cities[city]["lon"]}&max=#{amount}&within=#{@cities[city]["radius"]}&category=#{ac}&date=#{date}"
+					e_array = get_http_response(query)
+					if e_array
+						@e_brites.push(e_array["events"])
+					else
+						return nil
+					end
+				else
+					if image == category
+						startDate = Time.parse("#{@@weekend['all']['day']}").strftime('%Y-%m-%d')
+						endDate = Time.parse("#{@@weekend['all']['night']}").strftime('%Y-%m-%d')
+						query = "http://www.eventbrite.com/json/event_search?app_key=#{eb_key}&latitude=#{@cities[city]["lat"]}&longitude=#{@cities[city]["lon"]}&max=#{amount}&within=#{@cities[city]["radius"]}&category=#{ac}&date=#{startDate}%20#{endDate}"
+						e_array = get_http_response(query)
+						if e_array
+							@e_brites.push(e_array["events"])
+						else
+							return nil
+						end
+					end
+				end
+			end
+		end
+
+		# filter the results through these fine methods
+		count = 0
+		@e_brites.each do |event|
+			count = count + event.count - 1 
+			event.each do |e|
+				if e["event"] and e["event"]["venue"]
+					eb = e["event"]["num_attendee_rows"]
+					# manually set each popularity key by its num_attendee_rows data
+					if eb < 10
+						pop = 9
+					elsif eb > 9 and eb < 20
+						pop = 8
+					elsif eb > 19 and eb < 30
+						pop = 7
+					elsif eb > 29 and eb < 40
+						pop = 6
+					elsif eb > 39 and eb < 50
+						pop = 5
+					elsif eb > 49 and eb < 60
+						pop = 4
+					elsif eb > 59 and eb < 70
+						pop = 3
+					elsif eb > 69 and eb < 80 
+						pop = 2
+					elsif eb > 79
+						pop = 1
+					end
+					# insert key value pair of imageMarker in hash
+					e["event"]["mapImageMarker"] = pop
+					# insert popularity Measure value in hash
+					e["event"]["popularityMeasure"] = e["event"]["num_attendee_rows"]
+				end
+			end
+		end
+		average = count / 9
+
+		replace_dups(@e_brites,'eventbrite')
+
+		# return the e_brites array with nested events
+		return @e_brites
+	end
+
+	def meetup(day,city = 'nyc',amount=100,page=false)
+		key = '5c567f13323a4b4864774622f1fb'
+		meetup = [] 
+		i = 0
+		# loop through the days
+		if day == 'all' or day == '1' or day == 'reset'
+			@@weekend.each do |w|
+				if w[0] != 'all'
+					startDate = Time.parse("#{w[1]['day']}").to_i
+					endDate = Time.parse("#{w[1]['night']}").to_i
+					startDate = startDate.to_s + '000'
+					endDate = endDate.to_s + '000'
+					request = "https://api.meetup.com/2/open_events?key=#{key}&sign=true&zip=#{@cities[city]["zip"]}&radius=#{@cities[city]["radius2"]}&order=trending&desc=true&page=#{amount}&time=#{startDate},#{endDate}"
+					# pass uri to https request function
+					returned = JSON.parse(get_https(request))
+					i = i + 1
+					meetup[i] = returned
+				end
+			end
+		else
+			startDate = Time.parse("#{@@weekend[day]['day']}").to_i
+			endDate = Time.parse("#{@@weekend[day]['night']}").to_i
+			startDate = startDate.to_s + '000'
+			endDate = endDate.to_s + '000'
+			request = "https://api.meetup.com/2/open_events?key=#{key}&sign=true&zip=#{@cities[city]["zip"]}&radius=#{@cities[city]["radius2"]}&order=trending&desc=true&page=#{amount}&time=#{startDate},#{endDate}"
+			# pass uri to https request function
+			returned = JSON.parse(get_https(request))
+			meetup.push(returned)
+		end
+
+		# filter the results through these fine methods
+		# count = meetup[3] ? 300 : 100 
+		# average = count / 9
+		# replace_dups(meetup,'meetup')
+
+		# # sorting: if calling for all 3 days i loop through each and add sort count
+		# if meetup[3]
+		# 	i = 1
+		# 	while i < 4
+		# 		# loop through each data for day and filter
+		# 		sort_it(meetup[i]["results"],'yes_rsvp_count') 
+		# 		image_it(meetup[i]["results"],average)
+		# 		add_measure(meetup[i]["results"],['yes_rsvp_count'])
+		# 		i = i + 1
+		# 	end
+		# elsif meetup[0]["results"]
+		# 	sort_it(meetup[0]["results"],'yes_rsvp_count') 
+		# 	image_it(meetup[0]["results"],average)
+		# 	add_measure(meetup[0]["results"],['yes_rsvp_count'])
+		# end
+
+		return meetup
+	end
+
+	def songkick(day,city,amount=0,page=false)  
+
+		if page
+			songkick_page
+		end
+
+		# class variable is listed on top of page
+		if day == 'all' or day == 'reset'
+			startDate = Time.parse("#{@@weekend['all']['day']}").strftime('%Y-%m-%d')
+			endDate = Time.parse("#{@@weekend['all']['night']}").strftime('%Y-%m-%d')
+		else
+			startDate = Time.parse("#{@@weekend[day]['day']}").strftime('%Y-%m-%d')
+			endDate = Time.parse("#{@@weekend[day]['night']}").strftime('%Y-%m-%d')
+		end
+
+		key = '24q9kQ8Zmlqspxrl'
+
+		query = "http://api.songkick.com/api/3.0/events.json?apikey=#{key}&location=geo:#{@cities[city]['lat']},#{@cities[city]['lon']}&min_date=#{startDate}&max_date=#{endDate}"
+		songkick = get_http_response(query)
+
+		# if error in request
+		unless songkick
+			return nil
+		end
+
+		# filter results
+		count_it(songkick["resultsPage"]["results"]["event"])
+		add_measure(songkick["resultsPage"]["results"]["event"],['popularity'])
+		sort_it(songkick["resultsPage"]["results"]["event"],'popularity')
+		image_it(songkick["resultsPage"]["results"]["event"],@average)
+		# replace_dups(songkick["resultsPage"]["results"]["event"],'songkick')
+
+		return songkick
+	end
+
+	def plancast
+		query = 'http://api.plancast.com/02/plans/search.json?q=party'
+		pc_request = URI.parse(query)
+		pc_array = Net::HTTP.get_response(pc_request).body
+		plancast = JSON.parse(pc_array)
+	end
+
+	def socializr
+		key = '981AF714AEC11EEB664EE53F11143B98'
+		query = 'http://api.plancast.com/02/plans/search.json?q=party'
+		s_request = URI.parse(query)
+		s_array = Net::HTTP.get_response(s_request).body
+		socializr = s_array.to_xml
+	end
+
+	def active(day,city,amount = 200,page=false)
+		if day == 'reset'
+			day = 'all'
+		end
+
+		# sample startDate = '08%2F19%2F2011'
+		startDate = Time.parse("#{@@weekend[day]['day']}").strftime('%m %d %Y').gsub /\s/, '%2F'
+		endDate = Time.parse("#{@@weekend[day]['night']}").strftime('%m %d %Y').gsub /\s/, '%2F'
+
+		key = 'cy72tu6xtta533bmqw875ppm'
+		string = "http://api.amp.active.com/search?num=#{amount}&r=#{@cities[city]['radius']}&m=meta:startDate:daterange:#{startDate}...#{endDate}&v=json&l=#{@cities[city]['zip']}&api_key=#{key}"
+
+		# process the query
+		active = get_http_response(string)
+
+		# if error in request
+		unless active
+			return nil
+		end
+
+		# filter the results
+		count_it(active["_results"])
+		add_measure(active["_results"],['meta','estParticipants'])
+		# fill in the holes for estParticipants attribute
+		active["_results"].each {|a| a["meta"]["estParticipants"] = 10 if a["meta"]["estParticipants"].blank?}
+		active["_results"].sort! {|x,y| y["meta"]["estParticipants"].to_i <=> x["meta"]["estParticipants"].to_i} 
+		replace_dups(active["_results"],'active')
+		image_it(active["_results"],@average)
+
+		return active
+	end
+
+	def ticketfly(city,day,amount,page=false)
+		string = "http://www.ticketfly.com/api/events/list.json?orgId=1234&fromDate=2008-11-01&thruDate=2008-11-30&pageNum=5&maxResults=10"
+		t_request = URI.parse(string)
+		t_array = Net::HTTP.get_response(t_request).body
+		@active = JSON.parse(t_array)
+	end
+
+	def allforgood
+
+	end
+
+	def seatgeek(day,city,amount=500,page=false)
+		query = "http://api.seatgeek.com/1/events/in_your_area.json?zipcode=#{@cities[city]['zip']}&limit=#{amount}"
+		seatgeek = get_http_response(query)
+
+		# if error in request
+		unless seatgeek
+			return nil
+		end
+
+		# delete that are not within dates
+		if day == 'all' or day == 'reset'
+			seatgeek["events"].each do |s| 
+				if s["date"] != Time.parse("#{@@weekend['friday']['day']}").strftime('%B %d %Y') or s["date"] != Time.parse("#{@@weekend['saturday']['day']}").strftime('%B %d %Y') or s["date"] != Time.parse("#{@@weekend['sunday']['day']}").strftime('%B %d %Y')
+					s["validity"] = false
+				end
+			end
+		else
+			seatgeek["events"].delete_if do |s| 
+				s["date"] != Time.parse("#{@@weekend[day]['day']}").strftime('%B %d %Y')
+			end
+		end
+
+		# determine amount of results belong to each set of popularity point
+		count_it(seatgeek["events"])
+		sort_it(seatgeek["events"],'average_price')
+		image_it(seatgeek["events"],@average)
+		replace_dups(seatgeek["events"],'seatgeek')
+
+		return seatgeek
+	end
+
+end

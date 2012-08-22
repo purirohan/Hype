@@ -47,6 +47,8 @@ gem "will_paginate", ">= 3.0.3"
 gem 'quiet_assets', :group => :development
 gem "faker"
 gem "simplecov", :require => false, :group => :test
+gem "rMeetup"
+gem "settingslogic"
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

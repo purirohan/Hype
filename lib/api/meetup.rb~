@@ -1,0 +1,76 @@
+module Meetup_api
+  # To change this template use File | Settings | File Templates.
+  def meetup(day,city = 'nyc',amount=100,page=false)
+    key = '5c567f13323a4b4864774622f1fb'
+    meetup = []
+    i = 0
+    # loop through the days
+    if day == 'all' or day == '1' or day == 'reset'
+      @weekend.each do |w|
+        if w[0] != 'all'
+          startDate = Time.parse("#{w[1]['day']}").to_i
+          endDate = Time.parse("#{w[1]['night']}").to_i
+          startDate = startDate.to_s + '000'
+          endDate = endDate.to_s + '000'
+          request = "https://api.meetup.com/2/open_events?key=#{key}&sign=true&zip=#{@cities[city]["zip"]}&radius=#{@cities[city]["radius2"]}&order=trending&desc=true&page=#{amount}&time=#{startDate},#{endDate}"
+          # pass uri to https request function
+          returned = JSON.parse(get_https(request))
+          i = i + 1
+          meetup[i] = returned
+        end
+      end
+    else
+      startDate = Time.parse("#{@weekend[day]['day']}").to_i
+      endDate = Time.parse("#{@weekend[day]['night']}").to_i
+      startDate = startDate.to_s + '000'
+      endDate = endDate.to_s + '000'
+      request = "https://api.meetup.com/2/open_events?key=#{key}&sign=true&zip=#{@cities[city]["zip"]}&radius=#{@cities[city]["radius2"]}&order=trending&desc=true&page=#{amount}&time=#{startDate},#{endDate}"
+      # pass uri to https request function
+      returned = JSON.parse(get_https(request))
+      meetup.push(returned)
+    end
+
+    # filter the results through these fine methods
+    # count = meetup[3] ? 300 : 100
+    # average = count / 9
+    # replace_dups(meetup,'meetup')
+
+    # # sorting: if calling for all 3 days i loop through each and add sort count
+    # if meetup[3]
+    # 	i = 1
+    # 	while i < 4
+    # 		# loop through each data for day and filter
+    # 		sort_it(meetup[i]["results"],'yes_rsvp_count')
+    # 		image_it(meetup[i]["results"],average)
+    # 		add_measure(meetup[i]["results"],['yes_rsvp_count'])
+    # 		i = i + 1
+    # 	end
+    # elsif meetup[0]["results"]
+    # 	sort_it(meetup[0]["results"],'yes_rsvp_count')
+    # 	image_it(meetup[0]["results"],average)
+    # 	add_measure(meetup[0]["results"],['yes_rsvp_count'])
+    # end
+
+    return meetup
+  end
+
+  def meetup_page event_id
+    # remove prefix
+    event_id = event_id.gsub /meetup_/, ''
+		hash = Hash.new
+
+    key = '5c567f13323a4b4864774622f1fb'
+
+		event_id = '34943142'
+		request = "https://api.meetup.com/2/events?key=#{key}&sign=true&event_id=#{event_id}&page=20"
+    hash['data'] = JSON.parse(get_https(request))
+
+		hash['data']['results'].each do |m|
+			request = "https://api.meetup.com/2/groups?key=#{key}&sign=true&group_id=#{m['group']['id']}&page=20"
+			hash['data']['results'][0]['extra_group_info'] = JSON.parse(get_https(request))
+		end
+
+		return hash
+  end
+
+end
