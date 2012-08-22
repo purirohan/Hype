@@ -1,0 +1,1 @@
+Koala.http_service.http_options = {:ssl => {:ca_file => '/etc/ssl/certs/cert.pem'}}
