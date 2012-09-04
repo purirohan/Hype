@@ -1,4 +1,18 @@
-module Active_api
+require File.dirname(__FILE__) + "/event_api"
+require File.dirname(__FILE__) + "/api_helper"
+
+class Active
+  include EventApi
+  include ApiHelper
+
+  def self.fetch
+    startDate = '09%2F05%2F2012'
+    endDate = '09%2F13%2F2012'
+    amount = 200
+    city = 'dc'
+		query = "http://api.amp.active.com/search?num=#{amount}&r=#{ApiHelper.cities[city]['radius']}&m=meta:startDate:daterange:#{startDate}...#{endDate}&v=json&l=#{ApiHelper.cities[city]['zip']}&api_key=#{ApiSettings.active_key}"
+    EventApi.get_http_response(query)
+  end
 
 	def active(day,city,amount = 200,page=false)
 		if day == 'reset'

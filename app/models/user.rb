@@ -32,8 +32,6 @@ class User < ActiveRecord::Base
       end
     end
   end
-<<<<<<< HEAD
-=======
   
   def facebook
     @facebook ||= Koala::Facebook::API.new(oauth_token)

@@ -6,15 +6,14 @@ class Eventbrite
   include ApiHelper
 
   def self.fetch
-    category = 'conference'
-    city = 'nyc'
+    city = 'dc'
     query = "http://www.eventbrite.com/json/event_search?app_key=#{ApiSettings.eventbrite_key}&latitude=#{ApiHelper.cities[city]["lat"]}&longitude=#{ApiHelper.cities[city]["lon"]}&within=#{ApiHelper.cities[city]["radius"]}"
     EventApi.get_http_response(query)
   end
 
   # To change this template use File | Settings | File Templates.
   def eventbrite(category,city = 'nyc',amount = '100',page = false)
-    eb_key = 'ZjRmMTc2NDlkMTRh'
+    eb_key = ApiSettings.eventbrite_key
     # for repeat query searches
     @e_brites = []
 
@@ -109,10 +108,8 @@ class Eventbrite
     # remove prefix
     event_id = event_id.gsub /eventbrite_/, ''
 
-    eb_key = 'ZjRmMTc2NDlkMTRh'
-
     query = "http://www.eventbrite.com/json/event_get?app_key=#{eb_key}&id=#{event_id}"
-    e_array = get_http_response(query)
+    EventApi.get_http_response(query)
   end
 
 end

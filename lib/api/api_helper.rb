@@ -35,7 +35,6 @@ module ApiHelper
   end
 
   def self.cities
-    # def initialize(city)
     # list of availalbe cities and needed attributes for each api
     @cities = {
       'la' => {'lat'=>34.052234,'lon'=>'-118.243685','groupon'=>'los-angeles','zip'=>90012,'radius'=>50,'radius2'=>13,'zoom'=>12,'count'=>(550..650).to_a.shuffle.first},

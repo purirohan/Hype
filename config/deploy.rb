@@ -65,6 +65,6 @@ namespace :rvm do
   end
 end
 
-after "deploy:update", "copy_db_file"
+# after "deploy:update", "copy_db_file"
 #before "deploy", 'rvm:install_rvm', "rvm:trust_rvmrc"
 after "deploy:restart", "deploy:cleanup"#, 'deploy:symlink_db'
