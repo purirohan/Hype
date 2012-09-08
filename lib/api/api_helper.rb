@@ -2,14 +2,6 @@ module ApiHelper
   attr_reader :cities, :all_cats, :weekend
 
   def initialize
-    # ruby time: for date
-    @weekend = {
-      'friday' => {'day' => "Fri Jun 01 01:00:33 2011", 'night' => "Fri Jun 01 23:48:33 2011"},
-      'saturday' => {'day' => "Sat Jun 02 01:00:33 2011", 'night' => "Sat Jun 02 23:48:33 2011"},
-      'sunday' =>  {'day' => "Sun Jun 03 01:00:33 2011", 'night' => "Sun Jun 03 23:48:33 2011"},
-      'all' => {'day' => "Fri Jun 01 01:00:33 2011", 'night' => "Sun Jun 03 23:48:33 2011"}
-    }
-
     @all_cats = {
       'conference' => '4',
       'conventions' => '4',
@@ -39,7 +31,7 @@ module ApiHelper
     @cities = {
       'la' => {'lat'=>34.052234,'lon'=>'-118.243685','groupon'=>'los-angeles','zip'=>90012,'radius'=>50,'radius2'=>13,'zoom'=>12,'count'=>(550..650).to_a.shuffle.first},
       'nyc' => {'lat'=>40.737059,'lon'=>-73.972492,'groupon'=>'new-york','zip'=>'11222','radius'=>40,'radius2'=>11,'count'=>(550..650).to_a.shuffle.first},
-      'dc' => {'lat'=>38.89464,'lon'=>-76.999569,'groupon'=>'washington-dc','zip'=>20002,'radius'=>40,'radius2'=>11},
+      'dc' => {'lat'=>38.89464,'lon'=>-76.999569,'groupon'=>'washington-dc','zip'=>20010,'radius'=>40,'radius2'=>5},
       'chicago' => {'lat'=>41.881928,'lon'=>-87.644547,'groupon'=>'chicago','zip'=>60661,'radius'=>5,'radius2'=>11,'count'=>(450..550).to_a.shuffle.first},
       'sf' => {'lat'=>37.750943,'lon'=>-122.378499,'groupon'=>'san-francisco','zip'=>94117,'zip1'=>94601,'radius'=>20,'radius2'=>11,'zoom'=>12,'count'=>(550..650).to_a.shuffle.first},
       'ph' => {'lat'=>40.012545,'lon'=>-75.148701,'groupon'=>'philadelphia','zip'=>19140,'radius'=>20,'radius2'=>11},
@@ -67,32 +59,6 @@ module ApiHelper
       'lv' => {'lat'=>36.11465,'lon'=>-115.17282,'groupon'=>'las-vegas','zip'=>'89109','radius'=>50,'radius2'=>25}
 
     }
-  end
-
-  def plancast
-    query = 'http://api.plancast.com/02/plans/search.json?q=party'
-    pc_request = URI.parse(query)
-    pc_array = Net::HTTP.get_response(pc_request).body
-    plancast = JSON.parse(pc_array)
-  end
-
-  def socializr
-    key = '981AF714AEC11EEB664EE53F11143B98'
-    query = 'http://api.plancast.com/02/plans/search.json?q=party'
-    s_request = URI.parse(query)
-    s_array = Net::HTTP.get_response(s_request).body
-    socializr = s_array.to_xml
-  end
-
-  def ticketfly(city,day,amount,page=false)
-    string = "http://www.ticketfly.com/api/events/list.json?orgId=1234&fromDate=2008-11-01&thruDate=2008-11-30&pageNum=5&maxResults=10"
-    t_request = URI.parse(string)
-    t_array = Net::HTTP.get_response(t_request).body
-    @active = JSON.parse(t_array)
-  end
-
-  def allforgood
-
   end
 
 end

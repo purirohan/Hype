@@ -2,13 +2,14 @@ class HomeController < ApplicationController
   caches_page :index
 
   def index
-    @groupon = Groupon.fetch
-    @meetup = Meetup.fetch
-    @eventbrite = Eventbrite.fetch
-    @songkick = Songkick.fetch
-    @active = Active.fetch
-    @seatgeek = Seatgeek.fetch
-    @plancast = Plancast.fetch
-    @ticketfly = Ticketfly.fetch
+    @week = Week.this_week
+    @groupon = GrouponApi.fetch
+    @meetup = MeetupApi.fetch
+    @eventbrite = EventbriteApi.fetch
+    @songkick = SongkickApi.fetch
+    @active = ActiveApi.fetch
+    @seatgeek = SeatgeekApi.fetch
+    @plancast = PlancastApi.fetch
+    @ticketfly = TicketflyApi.fetch
   end
 end

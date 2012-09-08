@@ -15,9 +15,9 @@ development:
   database: hype_development
   pool: 5
   username: root
-  password: lophyounee86
+  password: karmaK00l2112
   host: localhost
-  socket: /Applications/rubystack-2.1-0/mysql/tmp/mysql.sock
+  # socket: /Applications/rubystack-2.1-0/mysql/tmp/mysql.sock
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

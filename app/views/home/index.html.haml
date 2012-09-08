@@ -23,39 +23,47 @@
     %h2 Eventbrite Content
     .content
       %pre query = http://www.eventbrite.com/json/event_search?app_key={ApiSettings.eventbrite_key}&latitude={ApiHelper.cities[city]["lat"]}&longitude={ApiHelper.cities[city]["lon"]}&within={ApiHelper.cities[city]["radius"]}
+      = debug @week.today.strftime('%m/%d/%Y')
       = debug @eventbrite
   #meetup.content-block
     %h2 Meetup Content
     .content
       %pre query = https://api.meetup.com/2/open_events?key={key}&sign=true&zip={city}&order=trending&desc=true&page=100
+      = debug @week.today.to_i.to_s + '000' 
       = @meetup
   #seatgeek.content-block
     %h2 Seatgeek Content
     .content
       %pre query = http://api.seatgeek.com/1/events/in_your_area.json?zipcode={ApiHelper.cities[city]['zip']}&limit={amount}
+      = debug @week.today 
       = debug @seatgeek
   #songkick.content-block
     %h2 Songkick Content
     .content
       %pre query = http://api.songkick.com/api/3.0/events.json?apikey={ApiSettings.songkick_key}&location=geo:{ApiHelper.cities[city]["lat"]},{ApiHelper.cities[city]["lon"]}
+      = debug @week.today 
       = debug @songkick
   #active.content-block
     %h2 Active Content
     .content
       %pre query = http://api.amp.active.com/search?num={amount}&r={ApiHelper.cities[city]['radius']}&m=meta:startDate:daterange:{startDate}...{endDate}&v=json&l={ApiHelper.cities[city]['zip']}&api_key={ApiSettings.active_key}
+      = debug @week.today 
       = debug @active
   #groupon.content-block
     %h2 Groupon Content
     .content
       %pre query = http://api.groupon.com/v2/deals.json?division_id=city&client_id=ApiSettings.groupon_key
+      = debug @week.today 
       = debug @groupon
   #plancast.content-block
     %h2 Plancast Content
     .content
       %pre query = http://www.ticketfly.com/api/events/list.json?orgId=orgs&fromDate=startDate&thruDate=endDate&maxResults=200
+      = debug @week.today 
       = debug @plancast
   #ticketfly.content-block
     %h2 Ticketfly Content
     .content
       %pre query = http://www.ticketfly.com/api/events/list.json?orgId=orgs&fromDate=startDate&thruDate=endDate&maxResults=200
+      = debug @week.today 
       = debug @ticketfly

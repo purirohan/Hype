@@ -6,7 +6,8 @@ gem 'rails', '3.2.6'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
-
+# gem 'mongo'
+# gem 'pg'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -21,6 +22,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem 'whenever'
 gem "haml", ">= 3.1.4"
 gem "haml-rails", ">= 0.3.4", :group => :development
 gem 'jquery-rails'
