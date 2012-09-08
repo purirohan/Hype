@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/event_api"
 require File.dirname(__FILE__) + "/api_helper"
 
-class Ticketfly
+class TicketflyApi
   include EventApi
   include ApiHelper
 
