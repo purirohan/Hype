@@ -1,9 +1,9 @@
 defaults: &defaults
-  groupon_key: 41550c408db4945fedee9121f4d982fd475ee594
-  meetup_key: 5c567f13323a4b4864774622f1fb
-  eventbrite_key: ZjRmMTc2NDlkMTRh
+  groupon_key: 010669153f12af0392daf44092bc22fa51ad8fb1
+  meetup_key: 4c39747053606885579c1f1eb653d
+  eventbrite_key: WPQSGYFXPAZ55ZIC7P
   songkick_key: 24q9kQ8Zmlqspxrl
-  active_key: cy72tu6xtta533bmqw875ppm
+  active_key: bjaq76juznexhx6rrtyzx9yk
 
 development:
   <<: *defaults

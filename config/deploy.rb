@@ -1,4 +1,3 @@
-
 require "bundler/capistrano"
 require "rvm/capistrano"                               # Load RVM's capistrano plugin.
 
@@ -6,7 +5,7 @@ set :stages, %w(production staging)
 set :default_stage, "production"
 require 'capistrano/ext/multistage'
 set :application, "hype"
-set :repository, "git@github.com:AgencyProtocol/rails_user.git"
+set :repository, "git@github.com:purirohan/Hype.git"
 set :scm, :git
 # ssh_options[:user] = "ubuntu"
 # ssh_options[:keys] = ["#{ENV['HOME']}/.ssh/keys/rails_app.pem"]
