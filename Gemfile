@@ -6,6 +6,9 @@ gem 'rails', '3.2.6'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
+# gem "mongoid"
+# gem "bson_ext"
+# gem "database_cleaner"
 # gem 'mongo'
 # gem 'pg'
 
